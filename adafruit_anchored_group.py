@@ -30,7 +30,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Anchored_Group.gi
 
 
 try:
-    from typing import Tuple
+    from typing import Dict, List, Tuple, Union
 except ImportError:
     pass
 
@@ -159,3 +159,27 @@ class AnchoredGroup(Group):
             self.x = int(new_position[0] - round(self._anchor_point[0] * _size[0]))
 
             self.y = int(new_position[1] - round(self._anchor_point[1] * _size[1]))
+
+    def contains(self, point: Union[tuple[int, int], List[int], List[Dict[str, int]]]) -> bool:
+        """Used to determine if a point is contained within this AnchoredGroup. For example,
+        ``anchored_group.contains(touch)`` where ``touch`` is the touch point on
+        the screen will allow for determining that the group has been touched.
+        """
+        if isinstance(point, tuple) or (isinstance(point, list) and isinstance(point[0], int)):
+            return (self.x <= point[0] <= self.x + self.width) and (
+                self.y <= point[1] <= self.y + self.height
+            )
+        elif isinstance(point, list):
+            touch_points = point
+            if len(touch_points) == 0:
+                return False
+            for touch_point in touch_points:
+                if (
+                    isinstance(touch_point, dict)
+                    and "x" in touch_point.keys()
+                    and "y" in touch_point.keys()
+                ):
+                    if self.contains((touch_point["x"], touch_point["y"])):
+                        return True
+
+        return False
