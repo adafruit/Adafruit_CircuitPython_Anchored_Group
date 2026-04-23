@@ -58,29 +58,21 @@ class AnchoredGroup(Group):
 
         for i, element in enumerate(group_to_measure):
             if isinstance(element, (TileGrid)):
-                if element.x < min_x:
-                    min_x = element.x
-                if element.y < min_y:
-                    min_y = element.y
+                min_x = min(min_x, element.x)
+                min_y = min(min_y, element.y)
 
                 _element_max_x = element.x + (element.width * element.tile_width)
                 _element_max_y = element.y + (element.height * element.tile_height)
-                if _element_max_x > max_x:
-                    max_x = _element_max_x
-                if _element_max_y > max_y:
-                    max_y = _element_max_y
+                max_x = max(max_x, _element_max_x)
+                max_y = max(max_y, _element_max_y)
             elif isinstance(element, AnchoredGroup):
-                if element.x < min_x:
-                    min_x = element.x
-                if element.y < min_y:
-                    min_y = element.y
+                min_x = min(min_x, element.x)
+                min_y = min(min_y, element.y)
                 _element_size = element.size
                 _element_max_x = element.x + (_element_size[0] * element.scale)
                 _element_max_y = element.y + (_element_size[1] * element.scale)
-                if _element_max_x > max_x:
-                    max_x = _element_max_x
-                if _element_max_y > max_y:
-                    max_y = _element_max_y
+                max_x = max(max_x, _element_max_x)
+                max_y = max(max_y, _element_max_y)
             elif isinstance(element, (vectorio.Rectangle, vectorio.Circle, vectorio.Polygon)):
                 raise NotImplemented("Vectorio not supported yet")
             elif isinstance(element, Group):
@@ -93,10 +85,8 @@ class AnchoredGroup(Group):
 
                 _element_max_x = element.x + _size[0]
                 _element_max_y = element.y + _size[1]
-                if _element_max_x > max_x:
-                    max_x = _element_max_x
-                if _element_max_y > max_y:
-                    max_y = _element_max_y
+                max_x = max(max_x, _element_max_x)
+                max_y = max(max_y, _element_max_y)
 
         return max_x - min_x, max_y - min_y
 
